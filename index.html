@@ -139,10 +139,6 @@ function animate() {
                             teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member.color !== boxData.color);
                             teams[newTeamIndex].members.push(boxData); 
                         } 
-
-
-                        // Remove from original team and add to new team
-                       
                     }
                 });
             });
@@ -163,7 +159,6 @@ function animate() {
     teams.forEach(team => {
         scoreboard[0].innerHTML += `<div style="width: 20px; height: 20px; display: grid; place-items: center; color: black; background-size: contain; background-repeat: no-repeat; padding-left: 20px; color: white;" class="${team.color}">${team.members.length}</div>`
     });
-
     requestAnimationFrame(animate);
 }
 
