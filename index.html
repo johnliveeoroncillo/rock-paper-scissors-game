@@ -121,7 +121,7 @@ function animate() {
 
                             const originalTeamIndex = teams.findIndex(t => t.color === otherColor);
                             const newTeamIndex = teams.findIndex(t => t.color === color);
-                            teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member !== otherBoxData);
+                            teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member.color !== otherBoxData.color);
                             teams[newTeamIndex].members.push(otherBoxData); 
                         } else {
                             element.classList.remove(color); 
@@ -134,7 +134,7 @@ function animate() {
 
                             const originalTeamIndex = teams.findIndex(t => t.color === color);
                             const newTeamIndex = teams.findIndex(t => t.color === otherColor);
-                            teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member !== boxData);
+                            teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member.color !== boxData.color);
                             teams[newTeamIndex].members.push(boxData); 
                         } 
 
