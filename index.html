@@ -5,6 +5,7 @@
 <style>
 body {
     margin: 0;
+    background-color: black;
 }
 .box {
     width: 20px;
@@ -22,6 +23,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+    color: white !important;
 }
 </style>
 </head>
@@ -159,7 +161,7 @@ function animate() {
     const scoreboard = document.getElementsByClassName('scoreboard');
     scoreboard[0].innerHTML = 'By: <a href="https://jlocodes.com" target="__blank">JLOCODES</a> ';
     teams.forEach(team => {
-        scoreboard[0].innerHTML += `<div style="width: 20px; height: 20px; display: grid; place-items: center; color: black; background-size: contain; background-repeat: no-repeat; padding-left: 20px;" class="${team.color}">${team.members.length}</div>`
+        scoreboard[0].innerHTML += `<div style="width: 20px; height: 20px; display: grid; place-items: center; color: black; background-size: contain; background-repeat: no-repeat; padding-left: 20px; color: white;" class="${team.color}">${team.members.length}</div>`
     });
 
     requestAnimationFrame(animate);
