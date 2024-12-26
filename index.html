@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rock/Paper/Scissors Innovation</title>
+<style>
+body {
+    margin: 0;
+}
+.box {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.paper { background-image: url('assets/paper.png'); }
+.rock { background-image: url('assets/rock.png'); }
+.scissor { background-image: url('assets/scissor.png'); }
+.scoreboard {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<div class="scoreboard"></div>
+
+<script>
+const numTeams = 3;
+const teamSizes = 20; 
+const teams = [];
+const maxSpeed = 20; // Adjust for desired speed
+
+const logic = [
+    ['paper', 'rock'],
+    ['rock', 'scissor'],
+    ['scissor', 'paper']
+]
+
+const logicWin = [
+    'paper',
+    'rock',
+    'scissor'
+]
+
+// Create teams with colors
+const logicKeys = Object.keys(logic);
+for (let i = 0; i < numTeams; i++) {
+    teams.push({
+        color: logicWin[i], 
+        members: [],
+    });
+}
+
+// Create boxes and assign to teams
+for (let i = 0; i < numTeams * teamSizes; i++) {
+    const box = document.createElement('div');
+    box.classList.add('box', teams[i % numTeams].color); 
+    document.body.appendChild(box);
+
+    teams[i % numTeams].members.push({
+        element: box,
+        x: Math.random() * (window.innerWidth - box.offsetWidth),
+        y: Math.random() * (window.innerHeight - box.offsetHeight),
+        dx: (Math.random() * 4 - 2) * maxSpeed, 
+        dy: (Math.random() * 4 - 2) * maxSpeed,
+        color: box.classList[1] // Get team color
+    });
+}
+
+function animate() {
+    teams.forEach(team => {
+        team.members.forEach(boxData => {
+            var { element, x: oldX, y: oldY, dx, dy, color } = boxData;
+
+            // Update position
+            let newX = oldX + dx * 0.1; 
+            let newY = oldY + dy * 0.1; 
+
+            // Edge bouncing
+            if (newX + element.offsetWidth >= window.innerWidth || newX <= 0) {
+                dx = -dx;
+                newX += dx * 0.1; // Adjust for immediate bounce
+            }
+            if (newY + element.offsetHeight >= window.innerHeight || newY <= 0) {
+                dy = -dy;
+                newY += dy * 0.1; // Adjust for immediate bounce
+            }
+
+            // Team domination logic
+            teams.forEach(otherTeam => {
+                if (otherTeam === team) return; // Skip self-team
+
+                otherTeam.members.forEach(otherBoxData => { 
+                    var { element: otherBox, x: otherX, y: otherY, color: otherColor } = otherBoxData;
+
+                    // let canDefeat = false;
+                    // let dominateColor = otherColor;
+                    const index = logic.findIndex((e) => e.includes(color) && e.includes(otherColor));
+                    const winnningCondition = logicWin[index];
+                    const notReverse = color === winnningCondition;
+                    const canDefeat = color === winnningCondition || otherColor === winnningCondition
+
+                    if (canDefeat &&
+                        color !== otherColor && 
+                        newX < otherX + otherBox.offsetWidth && 
+                        newX + element.offsetWidth > otherX && 
+                        newY < otherY + otherBox.offsetHeight && 
+                        newY + element.offsetHeight > otherY) { 
+
+                        if (notReverse) {
+                            otherBox.classList.remove(otherColor);
+                            otherBox.classList.add(color);
+                            otherBoxData.color = color;
+
+                            team.count++; 
+                            otherTeam.count--; 
+
+                            const originalTeamIndex = teams.findIndex(t => t.color === otherColor);
+                            const newTeamIndex = teams.findIndex(t => t.color === color);
+                            teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member !== otherBoxData);
+                            teams[newTeamIndex].members.push(otherBoxData); 
+                        } else {
+                            element.classList.remove(color); 
+                            element.classList.add(otherColor); 
+                            boxData.color = otherColor;
+
+
+                            team.count--; 
+                            otherTeam.count++; 
+
+                            const originalTeamIndex = teams.findIndex(t => t.color === color);
+                            const newTeamIndex = teams.findIndex(t => t.color === otherColor);
+                            teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member !== boxData);
+                            teams[newTeamIndex].members.push(boxData); 
+                        } 
+
+
+                        // Remove from original team and add to new team
+                       
+                    }
+                });
+            });
+
+            boxData.x = newX; 
+            boxData.y = newY; 
+            boxData.dx = dx;
+            boxData.dy = dy;
+
+            element.style.left = newX + "px";
+            element.style.top = newY + "px";
+        });
+    });
+
+    // Display team counts (optional)
+    const scoreboard = document.getElementsByClassName('scoreboard');
+    scoreboard[0].innerHTML = 'By: <a href="https://jlocodes.com" target="__blank">JLOCODES</a> ';
+    teams.forEach(team => {
+        scoreboard[0].innerHTML += `<div style="width: 20px; height: 20px; display: grid; place-items: center; color: black; background-size: contain; background-repeat: no-repeat; padding-left: 20px;" class="${team.color}">${team.members.length}</div>`
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+</script>
+
+</body>
+</html>
