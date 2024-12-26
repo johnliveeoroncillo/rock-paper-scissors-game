@@ -25,6 +25,25 @@ body {
     left: 0;
     color: white !important;
 }
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.5); 
+    border-radius: 50%;
+    animation: explode 0.5s ease-out forwards; 
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
 </style>
 </head>
 <body>
@@ -35,7 +54,7 @@ const numTeams = 3;
 const teamSizes = 20; 
 const teams = [];
 const maxSpeed = 20; // Adjust for desired speed
-
+const particleCount = 10; // Number of particles per explosion
 const logic = [
     ['paper', 'rock'],
     ['rock', 'scissor'],
@@ -71,6 +90,21 @@ for (let i = 0; i < numTeams * teamSizes; i++) {
         dy: (Math.random() * 4 - 2) * maxSpeed,
         color: box.classList[1] // Get team color
     });
+}
+
+function createParticles(x, y) {
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        document.body.appendChild(particle);
+
+        particle.style.left = x + (Math.random() * 20 - 10) + 'px'; 
+        particle.style.top = y + (Math.random() * 20 - 10) + 'px';
+
+        setTimeout(() => {
+            particle.remove(); 
+        }, 500); // Remove particles after 0.5 seconds
+    }
 }
 
 function animate() {
@@ -139,6 +173,9 @@ function animate() {
                             teams[originalTeamIndex].members = teams[originalTeamIndex].members.filter(member => member.color !== boxData.color);
                             teams[newTeamIndex].members.push(boxData); 
                         } 
+
+                        // Create splash particles
+                        createParticles(newX + element.offsetWidth / 2, newY + element.offsetHeight / 2); 
                     }
                 });
             });
